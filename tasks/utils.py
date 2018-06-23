@@ -1,11 +1,12 @@
 from __future__ import print_function
 from __future__ import unicode_literals
-from future import standard_library
-standard_library.install_aliases()
-from builtins import str
-from builtins import chr
-import os, errno, sys, traceback
-import re, html.entities
+from builtins import str, chr
+import os
+import sys
+import errno
+import traceback
+import re
+import html.entities
 import pprint
 
 from pytz import timezone
@@ -15,7 +16,7 @@ import datetime, time
 # scraper should be instantiated at class-load time, so that it can rate limit appropriately
 
 import scrapelib
-scraper = scrapelib.Scraper(requests_per_minute=120, follow_robots=False, retry_attempts=3)
+scraper = scrapelib.Scraper(requests_per_minute=120, retry_attempts=3)
 
 
 # manage input and output dirs
@@ -25,6 +26,9 @@ def output_dir():
 
 def input_dir():
     return "data/uscode.house.gov/zip"
+
+def cache_dir():
+    return "data/cache"
 
 def title_filename(title, year=2011):
     year = str(year)
@@ -81,13 +85,7 @@ def write(content, destination):
 # mdir -p in python, from:
 # http://stackoverflow.com/questions/600268/mkdir-p-functionality-in-python
 def mkdir_p(path):
-    try:
-        os.makedirs(path)
-    except OSError as exc: # Python >2.5
-        if exc.errno == errno.EEXIST:
-            pass
-        else: 
-            raise
+    os.makedirs(path, exist_ok=True)
 
 # taken from http://effbot.org/zone/re-sub.htm#unescape-html
 def unescape(text):

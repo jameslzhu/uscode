@@ -78,10 +78,7 @@ Section 65, R.S. §2037, related to wives and children of colored soldiers.
 '''
 from __future__ import print_function
 from __future__ import unicode_literals
-from future import standard_library
-standard_library.install_aliases()
-from builtins import input
-from builtins import map
+from builtins import input, map
 import re
 from functools import partial
 from collections import namedtuple

@@ -7,13 +7,12 @@ import sys
 import shutil
 from os.path import join
 import subprocess
+import logging
 
-from logbook import Logger
 from uscode import File
 import utils
 
-
-logger = Logger('debug')
+logger = logging.getLogger(__name__)
 
 def run(options):
     argv = options["argv"]

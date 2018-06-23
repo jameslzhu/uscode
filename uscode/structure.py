@@ -1,22 +1,15 @@
 from __future__ import print_function
 from __future__ import unicode_literals
-from builtins import map
-from builtins import next
-from builtins import str
-from builtins import object
+from builtins import map, next, str
 import os
 import re
 from os.path import join
 from itertools import count
 
-import logbook
+import logging
 
 from .utils import CachedAttribute
 from .schemes import Enum
-
-
-logger = logbook.Logger()
-
 
 class Token(object):
 
@@ -83,10 +76,11 @@ class BaseNode(list):
                 # Unenumerate, single child (a.k.a, top-level section text).
                 filename = 'text' + str(next(text_counter))
                 filename = join(path, filename)
-                logger.info('Writing text to %s' % filename)
+                logger = logging.getLogger(__name__)
+                logger.info('Writing text to %s', filename)
                 with open(filename, 'w') as f:
                     text = node.content.encode('utf-8')
-                    logger.info('..text: ' + repr(text[:70] + '...'))
+                    logger.info('..text: %s ...', repr(text[:70]))
                     f.write(text)
 
             else:
@@ -123,7 +117,8 @@ class Node(BaseNode):
         else:
             content = []
         self.extend(content)
-        self.logger = logbook.Logger(level='DEBUG')
+        self.logger = logging.getLogger(__name__)
+        self.logger.setLevel(logging.DEBUG)
 
     def __repr__(self):
         return 'Node(%r, %s)' % (self.enum, list.__repr__(self))

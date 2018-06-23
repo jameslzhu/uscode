@@ -17,10 +17,8 @@ Use it like this:
 >>> True
 '''
 from __future__ import unicode_literals
-from builtins import map
-from builtins import zip
-from builtins import range
-from builtins import object
+from builtins import map, zip, range
+
 import re
 import operator
 import itertools

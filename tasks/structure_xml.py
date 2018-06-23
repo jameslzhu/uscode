@@ -11,8 +11,6 @@ from __future__ import unicode_literals
 #   debug: Output debug messages only, and no JSON output (dry run)
 #   force: Force a re-download of the US Code
 
-from future import standard_library
-standard_library.install_aliases()
 from builtins import str
 import glob, re, lxml.etree, lxml.html, json, sys, os, os.path, urllib.request, urllib.parse, urllib.error, zipfile
 
