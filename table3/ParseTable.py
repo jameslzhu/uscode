@@ -10,34 +10,42 @@ The output is a list of references, currently printing to standard output.
 from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
-from bs4 import BeautifulSoup
+
 import re
 import sys
+import argparse
+from collections import defaultdict
+from pprint import pprint
+
+from bs4 import BeautifulSoup
 
 def parseTable(f):
 
-    soup = BeautifulSoup(f)
+    soup = BeautifulSoup(f, "html5lib")
     f.close()
 
     t = soup.find('table')
     t3 = t.find_all('tr')
 
-
-    sections = []
+    sections = defaultdict(list)
     for row in t3:
         cols = [x.get_text() for x in row.find_all("td")]
         if len(cols) > 4:
-            sections.append((cols[2],cols[3]))
+            sections[cols[2]].append(cols[3])
     return sections
 
 
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('input', help='input html file')
+
+    args = parser.parse_args()
+
+    filename = args.input
+    with open(filename, 'r') as f:
+        sections = parseTable(f)
+    pprint(sections)
+
 
 if __name__ == "__main__":
-    args = sys.argv
-    if len(args) != 2:
-        print('Usage: python ParseTable.py inputHTMLfile.htm')
-        sys.exit()
-    filename = sys.argv[1]
-    with open(filename,'r') as f:
-        sections = parseTable(f)
-    print(sections)
+    main()
