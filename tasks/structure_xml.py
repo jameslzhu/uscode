@@ -1,3 +1,5 @@
+from __future__ import print_function
+from __future__ import unicode_literals
 # Downloads and uses the XML version of the US Code to extract a table of contents.
 # 
 # Outputs JSON to STDOUT. Run and save with:
@@ -9,12 +11,15 @@
 #   debug: Output debug messages only, and no JSON output (dry run)
 #   force: Force a re-download of the US Code
 
-import glob, re, lxml.etree, lxml.html, json, sys, os, os.path, urllib, zipfile
+from future import standard_library
+standard_library.install_aliases()
+from builtins import str
+import glob, re, lxml.etree, lxml.html, json, sys, os, os.path, urllib.request, urllib.parse, urllib.error, zipfile
 
 import utils
 
-import HTMLParser
-pars = HTMLParser.HTMLParser()
+import html.parser
+pars = html.parser.HTMLParser()
 
 section_symbol = u'\xa7'
 
@@ -64,7 +69,7 @@ def run(options):
   
   # Write output in JSON to stdout.
   if debug:
-    print "\n(dry run only, not outputting)"
+    print("\n(dry run only, not outputting)")
   else:
     json.dump(TOC, sys.stdout, indent=2, sort_keys=True, check_circular=False)
   
@@ -74,8 +79,8 @@ def proc_node(node, parent, path, sections_only):
   remove_footnotes(node.xpath("uslm:heading", namespaces=ns)[0])
   entry = {
     "level": lxml.etree.QName(node.tag).localname,
-    "number": unicode(node.xpath("string(uslm:num/@value)", namespaces=ns)),
-    "name": unicode(node.xpath("string(uslm:heading)", namespaces=ns)),
+    "number": str(node.xpath("string(uslm:num/@value)", namespaces=ns)),
+    "name": str(node.xpath("string(uslm:heading)", namespaces=ns)),
   }
   if entry["level"] == "level": entry["level"] = "heading"
   
@@ -175,7 +180,7 @@ def download_usc(options):
   utils.mkdir_p(dest_dir)
   
   base_url = "http://uscode.house.gov/download/"
-  index_page = lxml.html.parse(urllib.urlopen(base_url + "download.shtml")).getroot()
+  index_page = lxml.html.parse(urllib.request.urlopen(base_url + "download.shtml")).getroot()
   for anode in index_page.xpath('//a[.="[XML]"]'):
     if "uscAll@" in anode.get("href"): continue # skip the all-titles archive
     if "xml_usc34@" in anode.get("href"): continue # title 34 doesn't exist (was repealed)

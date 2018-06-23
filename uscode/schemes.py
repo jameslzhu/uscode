@@ -16,10 +16,16 @@ Use it like this:
 >>> Enum('3-a') < Enum('3-b')
 >>> True
 '''
+from __future__ import unicode_literals
+from builtins import map
+from builtins import zip
+from builtins import range
+from builtins import object
 import re
 import operator
 import itertools
 import collections
+from functools import reduce
 
 
 #-----------------------------------------------------------------------------
@@ -37,7 +43,7 @@ def romans():
     res = []
     for x in tens:
         res += [x + y for y in ones]
-    return filter(None, res)
+    return [_f for _f in res if _f]
 _romans = romans()
 del romans
 
@@ -53,8 +59,8 @@ _schemes_lists = {
     'lower_quads':   [c * 4 for c in _alphabet],
     'upper_quads':   [c * 4 for c in _alphabet_upper],
     'lower_roman':   _romans,
-    'upper_roman':   map(str.upper, _romans),
-    'digits':        map(str, range(1, 200)),
+    'upper_roman':   list(map(str.upper, _romans)),
+    'digits':        list(map(str, list(range(1, 200)))),
     }
 
 del _alphabet
@@ -63,9 +69,7 @@ del _digits
 
 # The same dict as _schemes_lists, only with sets. Helpful for fast
 # membership testing.
-_schemes = dict(
-    (k, set(v)) for k, v in _schemes_lists.items()
-    )
+_schemes = dict((k, set(v)) for k, v in _schemes_lists.items())
 
 # Used for testing whether tab is first-in-scheme.
 _first_scheme_tokens_dict = {}
@@ -430,7 +434,7 @@ class Enum(list, SchemeEntity):
     def __and__(self, other):
         return self.get_common_schemes(other)
 
-    def __nonzero__(self):
+    def __bool__(self):
         return bool(self.text)
 
     def _itertokens(self):
@@ -515,7 +519,7 @@ class Enum(list, SchemeEntity):
         if self == other:
             return False
 
-        extra_tokens = filter(lambda x: x != '-', self[len(other):])
+        extra_tokens = [x for x in self[len(other):] if x != '-']
         if extra_tokens:
             if not all(t.is_first_in_scheme() for t in extra_tokens):
                 return False

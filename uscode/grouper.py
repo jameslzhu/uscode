@@ -70,6 +70,8 @@ Statute Body
  I12 - level 1
  Q04 - dedent
 '''
+from __future__ import unicode_literals
+from builtins import next
 from collections import defaultdict
 from operator import itemgetter
 

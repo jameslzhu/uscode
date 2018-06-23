@@ -1,3 +1,9 @@
+from __future__ import print_function
+from __future__ import unicode_literals
+from builtins import map
+from builtins import next
+from builtins import str
+from builtins import object
 import os
 import re
 from os.path import join
@@ -34,7 +40,7 @@ class Token(object):
 class Stream(object):
 
     def __init__(self, iterable):
-        self._stream = map(Token.make, iterable)
+        self._stream = list(map(Token.make, iterable))
         self.i = 0
 
     def __iter__(self):
@@ -46,7 +52,7 @@ class Stream(object):
             except IndexError:
                 raise StopIteration
 
-    def next(self):
+    def __next__(self):
         i = self.i + 1
         try:
             yield self._stream[i]
@@ -210,20 +216,20 @@ class Node(BaseNode):
 
     def tree(self, indent=0):
         if self.linedata:
-            print ' ' * indent, self.enum  # '[{0}, {1}]'.format(*self.linedata)
+            print(' ' * indent, self.enum)  # '[{0}, {1}]'.format(*self.linedata)
             # if 16 < int(self.linedata.arg):
             #     import pdb;pdb.set_trace()
         else:
-            print ' ' * indent, self.enum
+            print(' ' * indent, self.enum)
         if self.footnotes:
             for note in self.footnotes:
-                print 'NOTE:', note['number'], note['offset'],repr(note['text'])
+                print('NOTE:', note['number'], note['offset'],repr(note['text']))
         for node in self:
             if isinstance(node, Node):
                 node.tree(indent=indent + 2)
             elif isinstance(node, TextNode):
                 if node.content is not None:
-                    print ' ' * indent, node.content.encode('utf-8')
+                    print(' ' * indent, node.content.encode('utf-8'))
 
     def filedump(self, fp, indent=0):
 

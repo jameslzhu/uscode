@@ -76,12 +76,18 @@ Section 65, R.S. §2037, related to wives and children of colored soldiers.
 
 I21Section 65, R.S. ÿ1A2037, related to wives and children of colored soldiers.
 '''
+from __future__ import print_function
+from __future__ import unicode_literals
+from future import standard_library
+standard_library.install_aliases()
+from builtins import input
+from builtins import map
 import re
 from functools import partial
 from collections import namedtuple
 
 
-class GPOLocatorText(unicode):
+class GPOLocatorText(str):
     pass
 
 
@@ -104,7 +110,7 @@ class GPOLocatorLine(namedtuple('GPOLocatorLine', 'code arg data')):
             yield matchobj.group(1), matchobj.start()
 
     def footnotes(self):
-        return map(self._footnote_dict.get, self._footnote_numbers)
+        return list(map(self._footnote_dict.get, self._footnote_numbers))
 
     @property
     def text(self):
@@ -151,7 +157,7 @@ codes = {
 re_code = re.compile('|'.join(sorted(codes, reverse=True, key=len)))
 
 # Compile functions to match code arguments.
-for k, v in codes.items():
+for k, v in list(codes.items()):
     if v:
         codes[k] = re.compile(v).match
 
@@ -201,7 +207,7 @@ specialchars = {
     }
 
 # Compile the keys into a big regex.
-_ = map(re.escape, specialchars)
+_ = list(map(re.escape, specialchars))
 _ = '|'.join(sorted(_, key=len, reverse=True))
 _ = re.compile('(%s)' % _)
 
@@ -246,16 +252,16 @@ def getlines(fp, argmatchers=codes, codematcher=re_code.match, swap=swap,
 
 if __name__ == "__main__":
 
-    import urllib2
+    import urllib.request, urllib.error, urllib.parse
     import zipfile
-    from StringIO import StringIO
+    from io import StringIO
 
     # Download some GPO Locator data to play with, Title 8 of th US Code.
-    print 'Get comfy...this takes a sec...'
-    resp = urllib2.urlopen('http://uscode.house.gov/zip/2010/usc08.zip')
+    print('Get comfy...this takes a sec...')
+    resp = urllib.request.urlopen('http://uscode.house.gov/zip/2010/usc08.zip')
     data = StringIO(resp.read())
     fp = zipfile.ZipFile(data).open('usc08.10')
 
     for line in getlines(fp):
-        print line
-        raw_input('Press enter to see next line: ')
+        print(line)
+        input('Press enter to see next line: ')

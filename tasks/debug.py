@@ -1,4 +1,5 @@
 #! /home/thom/ve/2.7/bin/python
+from __future__ import unicode_literals
 import sys
 
 from logbook import Logger
@@ -54,4 +55,4 @@ def run(options):
 
 
 if __name__ == '__main__':
-    main()
+    run()

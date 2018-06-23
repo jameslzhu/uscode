@@ -1,3 +1,5 @@
+from __future__ import print_function
+from __future__ import unicode_literals
 # Downloads and uses the XHTML version of the US Code to extract a table of contents.
 # Defaults to USCprelim.
 # 
@@ -11,12 +13,16 @@
 #   debug: Output debug messages only, and no JSON output (dry run)
 #   force: Force a re-download of the US Code for the given year (script defaults to caching if the directory for a year is present)
 
+from future import standard_library
+standard_library.install_aliases()
+from builtins import str
+from builtins import range
 import glob, re, lxml.html, json, sys, os
 
 import utils
 
-import HTMLParser
-pars = HTMLParser.HTMLParser()
+import html.parser
+pars = html.parser.HTMLParser()
 
 section_symbol = u'\xa7'
 
@@ -69,7 +75,7 @@ def run(options):
     # extract title, to have on hand when parsing sections, and debug output
     title = match.groups(1)[0]
     if debug:
-      print "[%s] Processing title..." % title
+      print("[%s] Processing title..." % title)
 
     # Parse the XHTML file...
     dom = lxml.html.parse(fn)
@@ -79,7 +85,7 @@ def run(options):
     for n in dom.find("body/div"):
       # Look for comments of the form <!-- expcite:... -->
       # This tells us the current table of contents location for the following <h3>.
-      m = re.match(ur"<!-- expcite:(.*\S)\s*-->", unicode(n))
+      m = re.match(ur"<!-- expcite:(.*\S)\s*-->", str(n))
       if m:
         # This is a "!@!"-separated string giving the table-of-contents
         # path to each section as we see it.
@@ -114,7 +120,7 @@ def run(options):
 
   # Write output in JSON to stdout.
   if debug:
-    print "\n(dry run only, not outputting)"
+    print("\n(dry run only, not outputting)")
   else:
     json.dump(TOC, sys.stdout, indent=2, sort_keys=True, check_circular=False)
   
@@ -122,7 +128,7 @@ def parse_expcite(expcite):
   path = expcite.split("!@!")
   
   # Parse each part of the path:
-  for i in xrange(len(path)):
+  for i in range(len(path)):
     if re.match(r"\[.*-(REPEALED|RESERVED|OMITTED|TRANSFERRED)\]\s*$", path[i], re.I):
       # This part is repealed. No need to process this path at all.
       path = None
@@ -227,10 +233,10 @@ def download_usc(year, options):
   dest_dir = "data/uscode.house.gov/xhtml/%s" % year
 
   if os.path.isdir(dest_dir) and not options.get("force", False):
-    if debug: print "Cached, not downloading again"
+    if debug: print("Cached, not downloading again")
     return # assume it's downloaded
 
-  if debug: print "Downloading US Code XHTML for %s" % year
+  if debug: print("Downloading US Code XHTML for %s" % year)
   utils.mkdir_p(dest_dir)
   os.system("rm %s/*" % dest_dir)
   os.system("wget -q -m -l1 -P %s http://uscode.house.gov/xhtml/%s" % ("data", year))

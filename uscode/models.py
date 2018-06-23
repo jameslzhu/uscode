@@ -1,3 +1,9 @@
+from __future__ import print_function
+from __future__ import unicode_literals
+from builtins import filter
+from builtins import map
+from past.builtins import basestring
+from builtins import object
 import re
 import itertools
 from collections import namedtuple
@@ -5,6 +11,7 @@ from collections import namedtuple
 from .utils import CachedAttribute
 from .schemes import Enum
 from .structure import GPOLocatorParser
+from future.utils import with_metaclass
 
 
 class DataQualityError(Exception):
@@ -51,11 +58,9 @@ def jsonval(*funcs):
     return decorator
 
 
-class Base(object):
+class Base(with_metaclass(Registry, object)):
 
-    __metaclass__ = Registry
-
-    class meta:
+    class meta(object):
         abstract = True
 
     def __init__(self, data):
@@ -259,7 +264,7 @@ class Section(Base):
             else:
                 enum_text, body = re.split(r'\s+', text, 1)
                 enums = re.findall(r'\((\S+?)\)', enum_text)
-                enums = map(Enum, enums)
+                enums = list(map(Enum, enums))
                 for enum in enums[1:]:
                     enum._was_nested = True
 
@@ -279,7 +284,7 @@ class Section(Base):
         ignored = '''Amendments, Derivation, References In Text,
                      Codification'''
         ignored = re.split(r'[,\s+]+', ignored)
-        print set(self.data.docs) - set(ignored)
+        print(set(self.data.docs) - set(ignored))
         for k in set(self.data.docs) - set(ignored):
             if isinstance(k, basestring):
                 yield k, list(_subdoc_generator(k)(self))

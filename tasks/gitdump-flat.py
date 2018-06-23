@@ -1,3 +1,7 @@
+from __future__ import print_function
+from __future__ import unicode_literals
+from builtins import str
+from builtins import range
 import os
 import sys
 import shutil
@@ -115,7 +119,7 @@ def run(options):
             try:
                 out = subprocess.check_output(cmd, shell=True)
             except subprocess.CalledProcessError as e:
-                print e
+                print(e)
     # subprocess.check_call('cd /home/thom/code && octogit create '
     #                       '11USC101 "11 USC 101 in git"', shell=True)
     # subprocess.check_call('cd %s && git push origin master' % path, shell=True)
@@ -123,4 +127,4 @@ def run(options):
 
 if __name__ == '__main__':
     import sys
-    main(sys.argv[1:])
+    run(sys.argv[1:])

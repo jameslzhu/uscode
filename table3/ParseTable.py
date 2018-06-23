@@ -8,34 +8,36 @@ The output is a list of references, currently printing to standard output.
 """
 
 from __future__ import division
+from __future__ import print_function
+from __future__ import unicode_literals
 from bs4 import BeautifulSoup
 import re
 import sys
 
 def parseTable(f):
-   
+
     soup = BeautifulSoup(f)
     f.close()
-    
+
     t = soup.find('table')
     t3 = t.find_all('tr')
 
 
     sections = []
     for row in t3:
-        cols = map(lambda x: x.get_text(),row.find_all("td"))
+        cols = [x.get_text() for x in row.find_all("td")]
         if len(cols) > 4:
             sections.append((cols[2],cols[3]))
     return sections
-                
-                
+
+
 
 if __name__ == "__main__":
     args = sys.argv
     if len(args) != 2:
-        print 'Usage: python ParseTable.py inputHTMLfile.htm'
+        print('Usage: python ParseTable.py inputHTMLfile.htm')
         sys.exit()
     filename = sys.argv[1]
-    f = file(filename,'r')
-    sections = parseTable(f)
-    print sections
+    with open(filename,'r') as f:
+        sections = parseTable(f)
+    print(sections)

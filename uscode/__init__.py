@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 from .parser import getlines
 from .grouper import group
 from .models import *

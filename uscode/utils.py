@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+from builtins import object
 from operator import itemgetter
 
 ## {{{ http://code.activestate.com/recipes/276643/ (r1)

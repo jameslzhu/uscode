@@ -1,3 +1,5 @@
+from __future__ import print_function
+from __future__ import unicode_literals
 import os
 import sys
 import shutil
@@ -45,7 +47,7 @@ def run(options):
 
     for arg in reversed(args):
         year, msg = arg
-        print 'Committing', year, '...'
+        print('Committing', year, '...')
         title = int(argv[0])
         offset = int(argv[1])
         filename = utils.title_filename(title, year)
@@ -66,11 +68,11 @@ def run(options):
         js = qq.json()
         fson.dump(js, join(path, 'title%d' % title))
         cmd = 'cd %r && git add . && git commit -am"%s"' % (path, msg)
-        print 'Running', repr(cmd)
+        print('Running', repr(cmd))
         try:
             out = subprocess.check_output(cmd, shell=True)
         except subprocess.CalledProcessError as e:
-            print e
+            print(e)
     # subprocess.check_call('cd /home/thom/code && octogit create '
     #                       '11USC101 "11 USC 101 in git"', shell=True)
     # subprocess.check_call('cd %s && git push origin master' % path, shell=True)
@@ -78,4 +80,4 @@ def run(options):
 
 if __name__ == '__main__':
     import sys
-    main(sys.argv[1:])
+    run(sys.argv[1:])
